@@ -1,1 +1,87 @@
 @import "tailwindcss";
+
+@theme {
+  --color-baro-brown: #6b3f1f;
+  --color-baro-gold: #c8922a;
+  --color-baro-cream: #f5ecd7;
+  --color-baro-amber: #e8b86d;
+  --color-baro-bark: #3d1f0a;
+  --color-baro-sage: #7a8c6e;
+  --color-baro-yellow: #d4a017;
+  --color-baro-terra: #b85c38;
+  --color-baro-offwhite: #faf6ee;
+
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-baybayin: "Noto Sans Tagalog", serif;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    color: var(--color-baro-bark);
+    font-family: var(--font-body);
+    background-color: var(--color-baro-offwhite);
+    background-image:
+      radial-gradient(circle at top left, rgb(232 184 109 / 0.22), transparent 28%),
+      radial-gradient(circle at 85% 12%, rgb(122 140 110 / 0.14), transparent 22%),
+      linear-gradient(180deg, #fffdf8 0%, #faf6ee 55%, #f4ecde 100%);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background: rgb(200 146 42 / 0.24);
+  }
+}
+
+@layer components {
+  .baro-shell {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .baro-shell::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.44), rgb(255 255 255 / 0.18)),
+      radial-gradient(circle at 18% 20%, rgb(200 146 42 / 0.08), transparent 18%),
+      radial-gradient(circle at 78% 8%, rgb(122 140 110 / 0.08), transparent 18%);
+    z-index: -1;
+  }
+
+  .baro-panel {
+    border: 1px solid rgb(232 184 109 / 0.34);
+    background: rgb(255 252 245 / 0.84);
+    box-shadow:
+      0 14px 40px rgb(61 31 10 / 0.08),
+      inset 0 1px 0 rgb(255 255 255 / 0.65);
+    backdrop-filter: blur(10px);
+  }
+}

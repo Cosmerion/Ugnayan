@@ -1,26 +1,23 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
 
-// ---------------------------------------------------------------------------
-// NavBar
-// Sticky top bar on desktop; collapses to a fixed bottom tab bar on mobile.
-// ---------------------------------------------------------------------------
+const BAYBAYIN_WORD = '\u1712\u1704\u1714\u1708\u1711\u1708\u1714';
 
 export default function NavBar() {
-  const session  = useStore(s => s.session);
-  const logout   = useStore(s => s.logout);
+  const session = useStore(s => s.session);
+  const logout = useStore(s => s.logout);
   const navigate = useNavigate();
 
   const isOfficer = session?.role === 'officer';
 
   const links = isOfficer
     ? [
-        { to: '/dashboard', label: 'Dashboard', short: '🏠' },
-        { to: '/events',    label: 'Events',    short: '📅' },
+        { to: '/dashboard', label: 'Dashboard', short: 'DB' },
+        { to: '/events', label: 'Events', short: 'EV' },
       ]
     : [
-        { to: '/home', label: 'Home',    short: '🏠' },
-        { to: '/scan', label: 'Scan QR', short: '📷' },
+        { to: '/home', label: 'Home', short: 'HM' },
+        { to: '/scan', label: 'Scan QR', short: 'QR' },
       ];
 
   function handleLogout() {
@@ -28,53 +25,41 @@ export default function NavBar() {
     navigate('/login');
   }
 
-  const activeCls = 'underline underline-offset-4 font-semibold';
-  const linkCls   = 'hover:underline hover:underline-offset-4 transition-colors';
+  const activeCls = 'text-baro-cream border-b-2 border-baro-amber font-semibold';
+  const linkCls =
+    'text-baro-cream/78 border-b-2 border-transparent hover:text-baro-cream hover:border-baro-amber/50 transition-colors';
 
   return (
     <>
-      {/* ── Desktop top bar (hidden on mobile) ─────────────────────────── */}
-      <header className="hidden md:flex sticky top-0 z-50 items-center justify-between
-                         bg-baro-bark text-baro-cream px-6 py-3 shadow-md">
-        {/* Brand */}
+      <header className="baro-panel sticky top-0 z-50 hidden items-center justify-between border-x-0 border-t-0 bg-baro-bark/96 px-6 py-4 text-baro-cream md:flex">
         <div className="flex items-center gap-2">
-          <span className="font-baybayin text-xl" aria-hidden="true">
-            ᜂᜄ᜔ᜈᜌᜈ᜔
+          <span className="font-baybayin text-xl text-baro-amber" aria-hidden="true">
+            {BAYBAYIN_WORD}
           </span>
-          <span className="font-display text-lg font-semibold tracking-wide">
-            Ugnayan
-          </span>
+          <span className="font-display text-xl font-semibold tracking-[0.02em]">Ugnayan</span>
         </div>
 
-        {/* Nav links + Log Out */}
-        <nav className="flex items-center gap-6 text-sm">
-          {links.map(({ to, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                isActive ? activeCls : linkCls
-              }
-            >
-              {label}
-            </NavLink>
-          ))}
+        <div className="flex items-center gap-6 text-sm">
+          <nav aria-label="Main navigation" className="flex items-center gap-5">
+            {links.map(({ to, label }) => (
+              <NavLink key={to} to={to} className={({ isActive }) => `pb-1 ${isActive ? activeCls : linkCls}`}>
+                {label}
+              </NavLink>
+            ))}
+          </nav>
 
           <button
             onClick={handleLogout}
-            className="ml-4 rounded-md border border-baro-cream/40 px-3 py-1
-                       text-sm hover:bg-baro-cream/10 transition-colors"
+            className="ml-4 rounded-full border border-baro-cream/35 px-4 py-2 text-sm text-baro-cream hover:bg-baro-cream/10 transition-colors"
             aria-label="Log out"
           >
             Log Out
           </button>
-        </nav>
+        </div>
       </header>
 
-      {/* ── Mobile bottom tab bar (visible only on mobile) ──────────────── */}
       <nav
-        className="md:hidden fixed bottom-0 inset-x-0 z-50 flex
-                   bg-baro-bark text-baro-cream border-t border-baro-cream/20"
+        className="baro-panel fixed inset-x-3 bottom-3 z-50 flex rounded-2xl bg-baro-bark/96 text-baro-cream md:hidden"
         aria-label="Mobile navigation"
       >
         {links.map(({ to, short, label }) => (
@@ -82,26 +67,33 @@ export default function NavBar() {
             key={to}
             to={to}
             className={({ isActive }) =>
-              `flex-1 flex flex-col items-center justify-center py-2 text-xs gap-0.5
-               ${isActive ? 'text-baro-amber font-semibold' : 'hover:text-baro-amber'}`
+              `flex-1 flex flex-col items-center justify-center gap-1 py-3 text-[11px] ${
+                isActive ? 'text-baro-amber font-semibold' : 'text-baro-cream/80 hover:text-baro-amber'
+              }`
             }
             aria-label={label}
           >
-            <span className="text-lg leading-none" aria-hidden="true">
+            <span
+              className="rounded-full border border-current/25 px-2 py-0.5 text-[10px] leading-none tracking-[0.14em]"
+              aria-hidden="true"
+            >
               {short}
             </span>
             <span>{label}</span>
           </NavLink>
         ))}
 
-        {/* Log Out tab */}
         <button
           onClick={handleLogout}
-          className="flex-1 flex flex-col items-center justify-center py-2 text-xs gap-0.5
-                     hover:text-baro-amber transition-colors"
+          className="flex-1 flex flex-col items-center justify-center gap-1 py-3 text-[11px] text-baro-cream/80 hover:text-baro-amber transition-colors"
           aria-label="Log out"
         >
-          <span className="text-lg leading-none" aria-hidden="true">🚪</span>
+          <span
+            className="rounded-full border border-current/25 px-2 py-0.5 text-[10px] leading-none tracking-[0.14em]"
+            aria-hidden="true"
+          >
+            OUT
+          </span>
           <span>Log Out</span>
         </button>
       </nav>

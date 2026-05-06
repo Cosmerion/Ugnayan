@@ -1,29 +1,30 @@
 import { useMemo, useState } from 'react';
-import { useStore } from '../store';
 import CreateEventForm from '../components/CreateEventForm';
 import EventList from '../components/EventList';
 import QRDisplayModal from '../components/QRDisplayModal';
+import { useStore } from '../store';
 
-/**
- * EventsPage — officer-only page for managing events.
- * Two-column layout: event list on the left, create form on the right.
- */
 export default function EventsPage() {
   const events = useStore(state => state.events);
   const [qrEventId, setQrEventId] = useState<string | null>(null);
 
-  const activeEvent = useMemo(
-    () => events.find(e => e.id === qrEventId) ?? null,
-    [events, qrEventId],
-  );
+  const activeEvent = useMemo(() => events.find(e => e.id === qrEventId) ?? null, [events, qrEventId]);
 
   return (
-    <div className="p-6">
-      <h1 className="font-display text-baro-brown text-2xl mb-6">Event Management</h1>
+    <div className="baro-shell px-4 py-5 md:px-8 md:py-8">
+      <div className="mx-auto max-w-7xl">
+        <section className="baro-panel mb-6 rounded-[30px] bg-gradient-to-r from-baro-cream/92 to-white/88 px-6 py-6 md:px-8">
+          <p className="text-xs uppercase tracking-[0.2em] text-baro-terra">Events</p>
+          <h1 className="mt-2 font-display text-4xl text-baro-brown">Create and publish check-ins</h1>
+          <p className="mt-2 max-w-2xl text-sm text-baro-bark/72">
+            Officers can add new sessions, surface QR entry points, and keep attendance collection consistent.
+          </p>
+        </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <EventList events={events} onShowQR={setQrEventId} />
-        <CreateEventForm />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <EventList events={events} onShowQR={setQrEventId} />
+          <CreateEventForm />
+        </div>
       </div>
 
       <QRDisplayModal

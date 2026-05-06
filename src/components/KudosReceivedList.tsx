@@ -13,40 +13,29 @@ function formatDate(ts: number): string {
   });
 }
 
-/**
- * KudosReceivedList — card showing kudos received by the current member.
- * Sorted by createdAt descending.
- */
 export default function KudosReceivedList({ kudos, members }: KudosReceivedListProps) {
   const sorted = [...kudos].sort((a, b) => b.createdAt - a.createdAt);
 
   return (
-    <div className="bg-baro-cream rounded-xl border border-baro-amber/40 p-6">
-      <h2 className="font-display text-baro-brown text-lg mb-4">Kudos Received 🌸</h2>
+    <div className="baro-panel rounded-[28px] p-6">
+      <h2 className="mb-4 font-display text-lg text-baro-brown">Kudos Received</h2>
 
       {sorted.length === 0 ? (
-        <p className="text-baro-brown/50 text-sm text-center py-4">
-          No kudos yet — be the first to send one! 🌸
-        </p>
+        <p className="py-4 text-center text-sm text-baro-brown/50">No kudos yet — be the first to send one.</p>
       ) : (
         <ul>
           {sorted.map(kudo => {
-            const sender = members.find(m => m.id === kudo.from);
+            const sender = members.find(member => member.id === kudo.from);
             const senderName = sender?.name ?? 'Unknown';
 
             return (
-              <li
-                key={kudo.id}
-                className="flex gap-3 py-3 border-b border-baro-amber/30 last:border-0"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className="font-medium text-baro-brown text-sm">{senderName}</span>
-                    <span className="text-baro-brown/50 text-xs">{formatDate(kudo.createdAt)}</span>
+              <li key={kudo.id} className="flex gap-3 border-b border-baro-amber/30 py-3 last:border-0">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <span className="text-sm font-medium text-baro-brown">{senderName}</span>
+                    <span className="text-xs text-baro-brown/50">{formatDate(kudo.createdAt)}</span>
                   </div>
-                  {kudo.message && (
-                    <p className="text-baro-brown/80 text-sm mt-0.5">{kudo.message}</p>
-                  )}
+                  {kudo.message && <p className="mt-0.5 text-sm text-baro-brown/80">{kudo.message}</p>}
                 </div>
               </li>
             );

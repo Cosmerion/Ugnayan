@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { useStore } from '../store';
 import { useToast } from './Toast';
+import { useStore } from '../store';
 
 type FieldErrors = {
   name?: string;
@@ -10,12 +10,8 @@ type FieldErrors = {
 };
 
 const EVENT_TYPES = ['General Assembly', 'Workshop', 'Social', 'Planning'];
-
 const INITIAL_FORM = { name: '', date: '', type: '' };
 
-/**
- * CreateEventForm — controlled form for creating a new org event.
- */
 export default function CreateEventForm() {
   const createEvent = useStore(state => state.createEvent);
   const { showToast } = useToast();
@@ -23,8 +19,8 @@ export default function CreateEventForm() {
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState<FieldErrors>({});
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
     const nextErrors: FieldErrors = {};
     if (!form.name.trim()) nextErrors.name = 'Event name is required.';
@@ -36,73 +32,67 @@ export default function CreateEventForm() {
 
     createEvent({ name: form.name.trim(), date: form.date, type: form.type });
     setForm(INITIAL_FORM);
-    showToast('Event created! 📅', 'success');
+    showToast('Event created.', 'success');
   }
 
   return (
-    <div className="bg-baro-cream rounded-xl border border-baro-amber/40 p-6">
-      <h2 className="font-display text-baro-brown text-lg mb-4">Create Event</h2>
+    <div className="baro-panel rounded-[28px] p-6">
+      <p className="text-xs uppercase tracking-[0.2em] text-baro-terra">Create</p>
+      <h2 className="mt-2 mb-4 font-display text-[1.8rem] leading-none text-baro-brown">New event</h2>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
-        {/* Name */}
         <div>
-          <label className="block text-sm font-medium text-baro-bark mb-1" htmlFor="event-name">
+          <label className="mb-1 block text-sm font-medium text-baro-bark" htmlFor="event-name">
             Name
           </label>
           <input
             id="event-name"
             type="text"
             value={form.name}
-            onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+            onChange={event => setForm(current => ({ ...current, name: event.target.value }))}
             placeholder="June Leadership Workshop"
-            className="border border-baro-amber/60 rounded-lg px-3 py-2 w-full bg-baro-offwhite focus:outline-none focus:ring-2 focus:ring-baro-gold text-baro-bark"
+            className="w-full rounded-lg border border-baro-amber/60 bg-baro-offwhite px-3 py-2 text-baro-bark focus:outline-none focus:ring-2 focus:ring-baro-gold"
           />
-          {errors.name && (
-            <p className="text-baro-terra text-xs mt-1">{errors.name}</p>
-          )}
+          {errors.name && <p className="mt-1 text-xs text-baro-terra">{errors.name}</p>}
         </div>
 
-        {/* Date */}
         <div>
-          <label className="block text-sm font-medium text-baro-bark mb-1" htmlFor="event-date">
+          <label className="mb-1 block text-sm font-medium text-baro-bark" htmlFor="event-date">
             Date
           </label>
           <input
             id="event-date"
             type="date"
             value={form.date}
-            onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
-            className="border border-baro-amber/60 rounded-lg px-3 py-2 w-full bg-baro-offwhite focus:outline-none focus:ring-2 focus:ring-baro-gold text-baro-bark"
+            onChange={event => setForm(current => ({ ...current, date: event.target.value }))}
+            className="w-full rounded-lg border border-baro-amber/60 bg-baro-offwhite px-3 py-2 text-baro-bark focus:outline-none focus:ring-2 focus:ring-baro-gold"
           />
-          {errors.date && (
-            <p className="text-baro-terra text-xs mt-1">{errors.date}</p>
-          )}
+          {errors.date && <p className="mt-1 text-xs text-baro-terra">{errors.date}</p>}
         </div>
 
-        {/* Type */}
         <div>
-          <label className="block text-sm font-medium text-baro-bark mb-1" htmlFor="event-type">
+          <label className="mb-1 block text-sm font-medium text-baro-bark" htmlFor="event-type">
             Type
           </label>
           <select
             id="event-type"
             value={form.type}
-            onChange={e => setForm(f => ({ ...f, type: e.target.value }))}
-            className="border border-baro-amber/60 rounded-lg px-3 py-2 w-full bg-baro-offwhite focus:outline-none focus:ring-2 focus:ring-baro-gold text-baro-bark"
+            onChange={event => setForm(current => ({ ...current, type: event.target.value }))}
+            className="w-full rounded-lg border border-baro-amber/60 bg-baro-offwhite px-3 py-2 text-baro-bark focus:outline-none focus:ring-2 focus:ring-baro-gold"
           >
             <option value="">Select a type...</option>
-            {EVENT_TYPES.map(t => (
-              <option key={t} value={t}>{t}</option>
+            {EVENT_TYPES.map(type => (
+              <option key={type} value={type}>
+                {type}
+              </option>
             ))}
           </select>
-          {errors.type && (
-            <p className="text-baro-terra text-xs mt-1">{errors.type}</p>
-          )}
+          {errors.type && <p className="mt-1 text-xs text-baro-terra">{errors.type}</p>}
         </div>
 
         <button
           type="submit"
-          className="bg-baro-gold hover:bg-baro-brown text-baro-offwhite rounded-lg px-4 py-2 w-full transition-colors"
+          className="w-full rounded-lg bg-baro-gold px-4 py-2 text-baro-offwhite transition-colors hover:bg-baro-brown"
         >
           Create Event
         </button>

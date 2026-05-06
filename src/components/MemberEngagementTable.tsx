@@ -9,51 +9,37 @@ interface MemberEngagementTableProps {
 type SortKey = keyof MemberRow;
 type SortDir = 'asc' | 'desc';
 
-// ── Status badge ────────────────────────────────────────────────────────────
-
 interface StatusBadgeProps {
   status: 'green' | 'yellow' | 'red';
 }
 
 function StatusBadge({ status }: StatusBadgeProps) {
-  if (status === 'green') {
-    return (
-      <span
-        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
-                   bg-baro-sage/20 text-baro-sage"
-        aria-label="Engagement status: Active"
-      >
-        ✓ Active
-      </span>
-    );
-  }
-  if (status === 'yellow') {
-    return (
-      <span
-        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
-                   bg-baro-yellow/20 text-baro-yellow"
-        aria-label="Engagement status: At Risk"
-      >
-        ⚠ At Risk
-      </span>
-    );
-  }
+  const tones = {
+    green: 'bg-baro-sage/20 text-baro-sage',
+    yellow: 'bg-baro-yellow/20 text-baro-yellow',
+    red: 'bg-baro-terra/20 text-baro-terra',
+  }[status];
+
+  const label = {
+    green: 'Active',
+    yellow: 'At Risk',
+    red: 'Drifting',
+  }[status];
+
   return (
     <span
-      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
-                 bg-baro-terra/20 text-baro-terra"
-      aria-label="Engagement status: Drifting"
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${tones}`}
+      aria-label={`Engagement status: ${label}`}
     >
-      ✕ Drifting
+      <span className="h-2 w-2 rounded-full bg-current" aria-hidden="true" />
+      {label}
     </span>
   );
 }
 
-// ── Helpers ─────────────────────────────────────────────────────────────────
-
 function formatDate(iso: string | null): string {
   if (!iso) return '—';
-  const d = new Date(iso + 'T00:00:00'); // parse as local date
+  const d = new Date(`${iso}T00:00:00`);
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
@@ -61,7 +47,6 @@ function compareRows(a: MemberRow, b: MemberRow, key: SortKey, dir: SortDir): nu
   let aVal = a[key];
   let bVal = b[key];
 
-  // Treat null lastActivity as empty string for sorting (sorts last)
   if (aVal === null) aVal = '';
   if (bVal === null) bVal = '';
 
@@ -75,34 +60,21 @@ function compareRows(a: MemberRow, b: MemberRow, key: SortKey, dir: SortDir): nu
   return dir === 'asc' ? cmp : -cmp;
 }
 
-// ── Column definitions ───────────────────────────────────────────────────────
-
 const COLUMNS: { key: SortKey; label: string }[] = [
-  { key: 'name',           label: 'Name' },
+  { key: 'name', label: 'Name' },
   { key: 'eventsAttended', label: 'Attended' },
-  { key: 'lastActivity',   label: 'Last Active' },
-  { key: 'status',         label: 'Status' },
+  { key: 'lastActivity', label: 'Last Active' },
+  { key: 'status', label: 'Status' },
   { key: 'kudosThisMonth', label: 'Kudos This Month' },
 ];
 
-// ── Component ────────────────────────────────────────────────────────────────
-
-/**
- * MemberEngagementTable
- *
- * Sortable table of member engagement data.
- * Clicking a row opens the MemberDetailModal.
- */
-export default function MemberEngagementTable({
-  rows,
-  onRowClick,
-}: MemberEngagementTableProps) {
+export default function MemberEngagementTable({ rows, onRowClick }: MemberEngagementTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('name');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
 
   function handleHeaderClick(key: SortKey) {
     if (key === sortKey) {
-      setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
+      setSortDir(current => (current === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortKey(key);
       setSortDir('asc');
@@ -112,12 +84,13 @@ export default function MemberEngagementTable({
   const sorted = [...rows].sort((a, b) => compareRows(a, b, sortKey, sortDir));
 
   return (
-    <div className="bg-baro-cream rounded-xl shadow-sm border border-baro-amber/40 overflow-hidden">
-      <h2 className="font-display text-baro-brown text-lg p-4 pb-0">
-        Member Engagement
-      </h2>
+    <div className="baro-panel overflow-hidden rounded-[28px]">
+      <div className="px-5 pt-5">
+        <p className="text-xs uppercase tracking-[0.2em] text-baro-terra">Members</p>
+        <h2 className="pt-2 font-display text-[1.85rem] text-baro-brown">Member Engagement</h2>
+      </div>
 
-      <div className="overflow-x-auto mt-3">
+      <div className="mt-3 overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr>
@@ -125,14 +98,10 @@ export default function MemberEngagementTable({
                 <th
                   key={col.key}
                   onClick={() => handleHeaderClick(col.key)}
-                  className="bg-baro-bark text-baro-cream text-sm font-medium px-4 py-3
-                             cursor-pointer select-none text-left whitespace-nowrap"
+                  scope="col"
+                  className="cursor-pointer select-none whitespace-nowrap bg-baro-bark px-4 py-3 text-left text-sm font-medium text-baro-cream"
                   aria-sort={
-                    sortKey === col.key
-                      ? sortDir === 'asc'
-                        ? 'ascending'
-                        : 'descending'
-                      : 'none'
+                    sortKey === col.key ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'
                   }
                 >
                   {col.label}
@@ -150,24 +119,26 @@ export default function MemberEngagementTable({
               <tr
                 key={row.id}
                 onClick={() => onRowClick(row.id)}
-                className={`cursor-pointer hover:bg-baro-amber/20 transition-colors
-                  ${idx % 2 === 0 ? 'bg-baro-offwhite' : 'bg-baro-cream'}`}
+                className={`cursor-pointer transition-colors hover:bg-baro-amber/20 ${
+                  idx % 2 === 0 ? 'bg-baro-offwhite' : 'bg-baro-cream/75'
+                }`}
               >
-                <td className="px-4 py-3 text-baro-brown font-medium">{row.name}</td>
+                <td className="px-4 py-3 font-medium text-baro-brown">{row.name}</td>
                 <td className="px-4 py-3 text-baro-brown">{row.eventsAttended}</td>
                 <td className="px-4 py-3 text-baro-brown">{formatDate(row.lastActivity)}</td>
                 <td className="px-4 py-3">
                   <StatusBadge status={row.status} />
                 </td>
-                <td className="px-4 py-3 text-baro-brown">{row.kudosThisMonth}</td>
+                <td className="px-4 py-3 text-baro-brown">
+                  <span className="inline-flex min-w-8 justify-center rounded-full bg-baro-amber/18 px-2 py-1 text-xs font-semibold text-baro-brown">
+                    {row.kudosThisMonth}
+                  </span>
+                </td>
               </tr>
             ))}
             {sorted.length === 0 && (
               <tr>
-                <td
-                  colSpan={COLUMNS.length}
-                  className="px-4 py-8 text-center text-baro-brown/50"
-                >
+                <td colSpan={COLUMNS.length} className="px-4 py-8 text-center text-baro-brown/50">
                   No members found.
                 </td>
               </tr>

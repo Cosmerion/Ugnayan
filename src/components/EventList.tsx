@@ -13,39 +13,35 @@ function formatDate(date: string): string {
   });
 }
 
-/**
- * EventList — sorted by date descending, with a "Show QR" button per event.
- */
 export default function EventList({ events, onShowQR }: EventListProps) {
   const sorted = [...events].sort((a, b) => b.date.localeCompare(a.date));
 
   return (
-    <div>
-      <h2 className="font-display text-baro-brown text-lg mb-4">Events</h2>
+    <div className="baro-panel rounded-[28px] p-6">
+      <p className="text-xs uppercase tracking-[0.2em] text-baro-terra">Live Events</p>
+      <h2 className="mt-2 mb-4 font-display text-[1.8rem] leading-none text-baro-brown">Event list</h2>
 
       {sorted.length === 0 ? (
-        <div className="text-baro-brown/50 text-center py-8">
-          <div className="text-4xl mb-2">🌸</div>
-          <p>No events yet. Create one to get started!</p>
+        <div className="py-8 text-center text-baro-brown/50">
+          <div className="mb-2 text-4xl font-display text-baro-gold">✿</div>
+          <p>No events yet. Create one to get started.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {sorted.map(event => (
             <div
               key={event.id}
-              className="bg-baro-cream rounded-xl border border-baro-amber/40 p-4 flex items-center justify-between gap-4"
+              className="flex items-center justify-between gap-4 rounded-xl border border-baro-amber/40 bg-baro-cream p-4"
             >
               <div className="min-w-0">
-                <div className="font-display text-baro-brown font-medium truncate">
-                  {event.name}
-                </div>
-                <div className="text-baro-brown/60 text-sm mt-0.5">
+                <div className="truncate font-display font-medium text-baro-brown">{event.name}</div>
+                <div className="mt-0.5 text-sm text-baro-brown/60">
                   {formatDate(event.date)} · {event.type}
                 </div>
               </div>
               <button
                 onClick={() => onShowQR(event.id)}
-                className="shrink-0 bg-baro-gold text-white text-sm px-3 py-1.5 rounded-lg hover:bg-baro-brown transition-colors"
+                className="shrink-0 rounded-lg bg-baro-gold px-3 py-1.5 text-sm text-white transition-colors hover:bg-baro-brown"
               >
                 Show QR
               </button>
